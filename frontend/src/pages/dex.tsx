@@ -7,23 +7,20 @@ import {useNavigate} from "react-router";
 
 
 
-const Home: FC = () => {
+const DEX: FC = () => {
 
     const navigate = useNavigate();
 
     const connectWallet = () => {
         console.log('clicked');
-
-        // HERE HANDLE CONNECTING TO WALLET
-
-        navigate('/dex');
+        navigate('/');
     }
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-gray-600">
             <header className="text-center mb-6">
-                <h1 className="text-4xl font-bold">Connect Wallet</h1>
-                <h3 className="text-2xl">MetaMask</h3>
+                <h1 className="text-4xl font-bold">DEX</h1>
+                <h3 className="text-2xl">Decentralized Exchange</h3>
             </header>
             <div>
                 <Button
@@ -31,7 +28,7 @@ const Home: FC = () => {
                     onClick={connectWallet}
                     className="text-lg py-3 px-6" // Add custom classes to enlarge the button
                 >
-                    Connect
+                    Back
                 </Button>
             </div>
         </div>
@@ -40,4 +37,4 @@ const Home: FC = () => {
 
 
 
-export default Home;
+export default DEX;

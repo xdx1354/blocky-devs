@@ -4,7 +4,7 @@ import '../styles/App.css';
 import '../styles/tailwind.css';
 import { useWallet } from "../utils/WalletContext";
 import {useNavigate} from "react-router";
-import {set} from "zod";
+import {ExchangeForm} from "../components/ExchangeForm";
 
 
 
@@ -84,7 +84,7 @@ const DEX: FC = () => {
 
                 <div className="flex flex-row justify-evenly items-center min-h-80 p-6 w-screen space-y-6">
                     <div className="border border-gray-200 rounded-md p-6 min-h-80 min-w-fit">
-                        FORM
+                        <ExchangeForm/>
                     </div>
                     <div className="border border-gray-200 rounded-md p-6 min-h-80 min-w-fit">
                         <p>ETH/USD: {ethPrice}</p>

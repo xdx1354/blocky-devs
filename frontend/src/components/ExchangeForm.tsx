@@ -16,26 +16,25 @@ import {
 } from "./ui/form"
 import { Input } from "./ui/input"
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "./ui/select"
-import {useWallet} from "../utils/WalletContext";
+import {useAccount, useBalance} from "wagmi";
+import Web3 from 'web3';
 
 export function ExchangeForm() {
-    const {
-        connectedAccount,
-        error,
-        balance,
-        connectWallet,
-        isConnected
-    } = useWallet();
 
-    // Parse the balance string to a number (default to 0 if balance is null or invalid)
-    const parsedBalance = parseFloat(balance || '0');
+    const { address, isConnected } = useAccount();
+    const { data, isError, isLoading } = useBalance({
+        address: address,
+    });
+
+    const balanceInETH = data ? parseFloat(Web3.utils.fromWei(data.value.toString(), 'ether')) : 0;
+
 
     const formSchema = z.object({
         ETH_amount: z.preprocess((val) => parseFloat(val as string), z
             .number({ invalid_type_error: "Amount must be a number." })
             .positive({ message: "Amount must be positive." })
-            .max(parsedBalance, {
-                message: `Amount cannot exceed your balance of ${parsedBalance} ETH.`,
+            .max(balanceInETH, {
+                message: `Amount cannot exceed your balance of ${balanceInETH} ETH.`,
             })),
         currency: z.string().min(2, { message: "Currency must be selected." })
     });
@@ -53,8 +52,8 @@ export function ExchangeForm() {
     function onSubmit(values: z.infer<typeof formSchema>) {
         // Do something with the form values.
         // ✅ This will be type-safe and validated.
-        //TODO: handle the  submit
-        console.log(values)
+        //TODO: handle the submit -> smartContract
+        console.log(data)
     }
 
     return (

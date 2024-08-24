@@ -4,7 +4,9 @@ import logo from "./logo.svg";
 import Home from "./pages/Home";
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import DEX from "./pages/dex";
-import {WalletProvider} from "./utils/WalletContext";
+import {WalletProvider} from "./legacy/WalletContext";
+
+
 function App() {
     const [count, setCount] = useState(0);
 

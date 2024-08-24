@@ -59,4 +59,4 @@ const useWallet = (): UseWalletReturnType => {
     };
 };
 
-export default useWallet;
+// export default useWallet;

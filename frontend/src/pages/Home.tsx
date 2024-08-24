@@ -5,7 +5,7 @@ import '../styles/tailwind.css';
 import { useNavigate } from "react-router";
 import { Web3 } from "web3";
 import {undefined} from "zod";
-import useWallet from "../utils/useWallet";
+import { useWallet } from "../utils/WalletContext";
 
 const Home: FC = () => {
     const navigate = useNavigate();
@@ -41,7 +41,10 @@ const Home: FC = () => {
                 <p>Connected Account: {connectedAccount}</p>
                 <p>Balance: {balance} ETH</p>
             </div>
-            { isConnected && <Button onClick={() => navigate('/dex')}> Go to DEX </Button>}
+            { isConnected && <Button onClick={() => {
+                navigate('/dex');
+                console.log('isConnected', isConnected);
+            }}> Go to DEX </Button>}
 
         </div>
     );

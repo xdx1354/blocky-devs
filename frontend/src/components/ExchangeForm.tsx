@@ -20,13 +20,15 @@ import {
     useAccount,
     useBalance,
     useWriteContract,
-    useConnect
+    useConnect,
+    useWatchContractEvent,
+    type UseWatchContractEventParameters
 } from "wagmi";
 import { injected } from "wagmi/connectors"
 import { sepolia } from "viem/chains"
 import Web3 from 'web3';
 import {useState} from "react";
-import {ethers, parseEther} from "ethers";
+import abi from "../contracts/DEX_abi.json"
 
 export function ExchangeForm() {
 
@@ -54,7 +56,7 @@ export function ExchangeForm() {
         currency: z.string().min(2, { message: "Currency must be selected." })
     });
 
-    // 1. Define your form.
+    // form definition
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -65,7 +67,6 @@ export function ExchangeForm() {
 
 
     // EXCHANGE HANDLING
-
     const handleExchange = async (amountInETH: number) => {
         try {
             setErrors('')
@@ -79,19 +80,13 @@ export function ExchangeForm() {
 
             const data = await writeContractAsync({
                 chainId: sepolia.id,
-                address: '0x50aCFF860916E74e15C749fC39A4bD84B550B5e7', // address of DEX contract
+                address: '0xFAda3be1C91290FFc687DA025b60BaeC8A0048Cf', // address of DEX contract
                 functionName: 'buy',
-                abi: [{
-                    "inputs": [],
-                    "name": "buy",
-                    "outputs": [],
-                    "stateMutability": "payable",
-                    "type": "function"
-                }],
+                abi,
                 value: amountInWei
             })
             setCompleted(true)
-            console.log(data)
+            console.log('Transfer completed:', data)
         } catch(err) {
             console.log(err)
             setStarted(false)
@@ -99,14 +94,24 @@ export function ExchangeForm() {
         }
     }
 
+    // EXCHANGE EVENTS WATCHING
+
+    useWatchContractEvent({
+        address: '0xFAda3be1C91290FFc687DA025b60BaeC8A0048Cf',// address of DEX contract for watching
+        abi,
+        eventName: 'Transaction',
+        onLogs(logs) {
+            console.log('New logs!', logs)
+        },
+        onError(error) {
+            console.error('Error:', error);
+        },
+        syncConnectedChain: true
+    });
 
     // 2. Define a submit handler.
     function onSubmit(values: z.infer<typeof formSchema>) {
-        // Do something with the form values.
-        // ✅ This will be type-safe and validated.
-        //TODO: handle the submit -> smartContract
         handleExchange(values.ETH_amount);
-        // console.log(data);
     }
 
     return (

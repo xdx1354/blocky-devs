@@ -2,7 +2,7 @@
 import { createWeb3Modal } from '@web3modal/wagmi/react'
 import { defaultWagmiConfig } from '@web3modal/wagmi/react/config'
 
-import { WagmiProvider } from 'wagmi'
+import {cookieStorage, createStorage, http, WagmiProvider} from 'wagmi'
 import {sepolia} from 'wagmi/chains'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import {ReactNode} from "react";
@@ -22,18 +22,33 @@ const metadata = {
 }
 
 const chains = [sepolia] as const
-const config = defaultWagmiConfig({
+
+// const config = defaultWagmiConfig({
+//     chains,
+//     projectId,
+//     metadata,
+//     // ssr: true,
+//     syncConnectedChain: true,
+//     transports: {
+//         [sepolia.id]: http(process.env.REACT_APP_RPC_KEY!),
+//     },
+// })
+
+export const config = defaultWagmiConfig({
     chains,
     projectId,
     metadata,
-    // ...wagmiOptions // Optional - Override createConfig parameters
-})
+    transports: {
+        [sepolia.id]: http(process.env.REACT_APP_RPC_KEY!),
+    },
+});
 
 // 3. Create modal
 createWeb3Modal({
     wagmiConfig: config,
     projectId,
-    chains
+    chains,
+    defaultChain: sepolia
     // enableAnalytics: true, // Optional - defaults to your Cloud configuration
     // enableOnramp: true // Optional - false as default
 })

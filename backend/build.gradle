@@ -20,12 +20,16 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.postgresql:postgresql'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
     implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
-//	implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
-//	implementation 'org.springframework.session:spring-session-jdbc'
+
+    // Lombok dependencies
+    compileOnly 'org.projectlombok:lombok:latest.release'
+    annotationProcessor 'org.projectlombok:lombok:latest.release'
+
+
+    // Test dependencies
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
     testImplementation 'org.springframework.security:spring-security-test'

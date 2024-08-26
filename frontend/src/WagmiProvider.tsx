@@ -23,17 +23,6 @@ const metadata = {
 
 const chains = [sepolia] as const
 
-// const config = defaultWagmiConfig({
-//     chains,
-//     projectId,
-//     metadata,
-//     // ssr: true,
-//     syncConnectedChain: true,
-//     transports: {
-//         [sepolia.id]: http(process.env.REACT_APP_RPC_KEY!),
-//     },
-// })
-
 export const config = defaultWagmiConfig({
     chains,
     projectId,
@@ -48,7 +37,6 @@ createWeb3Modal({
     wagmiConfig: config,
     projectId,
     chains,
-    defaultChain: sepolia
     // enableAnalytics: true, // Optional - defaults to your Cloud configuration
     // enableOnramp: true // Optional - false as default
 })

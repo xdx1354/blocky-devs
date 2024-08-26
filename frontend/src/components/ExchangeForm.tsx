@@ -41,6 +41,7 @@ export function ExchangeForm() {
     const { data, isError, isLoading } = useBalance({
         address: address,
     });
+    // const [currentTransaction, setCurrentTransaction] = useState();
 
     const [ethAmount, setEthAmount] = useState('0.01');
 
@@ -72,21 +73,25 @@ export function ExchangeForm() {
             setErrors('')
             setStarted(true)
             setCompleted(false);
+
             if(!address) {
                 await connectAsync({ chainId: sepolia.id, connector: injected()})
             }
 
             const amountInWei = Web3.utils.toBigInt(Web3.utils.toWei(amountInETH, 'ether'));
 
-            const data = await writeContractAsync({
+            const transaction = await writeContractAsync({
                 chainId: sepolia.id,
                 address: '0xFAda3be1C91290FFc687DA025b60BaeC8A0048Cf', // address of DEX contract
                 functionName: 'buy',
                 abi,
                 value: amountInWei
             })
-            setCompleted(true)
-            console.log('Transfer completed:', data)
+
+            // setCurrentTransaction(transaction);
+            console.log('Transaction deployed: ',transaction);
+            console.log('Waiting for confirmation...');
+
         } catch(err) {
             console.log(err)
             setStarted(false)
@@ -101,13 +106,36 @@ export function ExchangeForm() {
         abi,
         eventName: 'Transaction',
         onLogs(logs) {
-            console.log('New logs!', logs)
+
+            setCompleted(true);
+            setStarted(false);
+
+            const log = logs[0];
+            // for some reason Log type is broken and don't see the .args object
+            // @ts-ignore
+            console.log('Log.data: ', handleJsonParsing(log.args));
         },
         onError(error) {
             console.error('Error:', error);
         },
         syncConnectedChain: true
     });
+
+
+    const handleJsonParsing = (rawdata:any) => {
+        const result: any = {};
+        for (const [key, value] of Object.entries(rawdata)) {
+            if (typeof value === 'bigint') {
+                result[key] = value.toString(); // Zamiana BigInt na string
+            } else if (typeof value === 'object' && value !== null) {
+                result[key] = handleJsonParsing(value); // Rekurencyjna zamiana
+            } else {
+                result[key] = value; // Wartości niezmienne
+            }
+        }
+
+        return JSON.stringify(result);
+    }
 
     // 2. Define a submit handler.
     function onSubmit(values: z.infer<typeof formSchema>) {

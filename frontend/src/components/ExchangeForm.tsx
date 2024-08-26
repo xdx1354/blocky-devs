@@ -16,31 +16,52 @@ import {
 } from "./ui/form"
 import { Input } from "./ui/input"
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "./ui/select"
-import {useWallet} from "../utils/WalletContext";
+import {
+    useAccount,
+    useBalance,
+    useWriteContract,
+    useConnect,
+    useWatchContractEvent,
+} from "wagmi";
+import { injected } from "wagmi/connectors"
+import { sepolia } from "viem/chains"
+import Web3 from 'web3';
+import {useState} from "react";
+import abi from "../contracts/DEX_abi.json"
 
 export function ExchangeForm() {
-    const {
-        connectedAccount,
-        error,
-        balance,
-        connectWallet,
-        isConnected
-    } = useWallet();
 
-    // Parse the balance string to a number (default to 0 if balance is null or invalid)
-    const parsedBalance = parseFloat(balance || '0');
+    const { connectAsync } = useConnect()
+    const { address } = useAccount()
+    const { writeContractAsync } = useWriteContract()
+    const [started, setStarted] = useState(false)
+    const [errors, setErrors] = useState<string>()
+    const [completed, setCompleted] = useState(false)
+    const { data, isError, isLoading } = useBalance({
+        address: address,
+    });
 
+
+    const [ethAmount, setEthAmount] = useState('0.01');
+
+    const balanceInETH = data ? parseFloat(Web3.utils.fromWei(data.value.toString(), 'ether')) : 0;
+
+    /**
+     * Form validation schema with errors handling
+     */
     const formSchema = z.object({
         ETH_amount: z.preprocess((val) => parseFloat(val as string), z
             .number({ invalid_type_error: "Amount must be a number." })
             .positive({ message: "Amount must be positive." })
-            .max(parsedBalance, {
-                message: `Amount cannot exceed your balance of ${parsedBalance} ETH.`,
+            .max(balanceInETH, {
+                message: `Amount cannot exceed your balance of ${balanceInETH} ETH.`,
             })),
         currency: z.string().min(2, { message: "Currency must be selected." })
     });
 
-    // 1. Define your form.
+    /**
+     * Form definition
+     */
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -49,12 +70,98 @@ export function ExchangeForm() {
         },
     })
 
-    // 2. Define a submit handler.
+
+    /**
+     * Performs buy() operation of DEX contract which performs exchange of given amount of ETH (Sepolia) tokens for
+     * USDC (custom token) based on data from chainlink oracle.
+     * @param amountInETH - amount of eth in (in ETH - meaning 10^0)
+     */
+    const handleExchange = async (amountInETH: number) => {
+        try {
+            setErrors('')
+            setStarted(true)
+            setCompleted(false);
+
+            if(!address) {
+                await connectAsync({ chainId: sepolia.id, connector: injected()})
+            }
+
+            const amountInWei = Web3.utils.toBigInt(Web3.utils.toWei(amountInETH, 'ether'));
+
+            const transaction = await writeContractAsync({
+                chainId: sepolia.id,
+                address: '0xFAda3be1C91290FFc687DA025b60BaeC8A0048Cf', // address of DEX contract
+                functionName: 'buy',
+                abi,
+                value: amountInWei
+            })
+
+            // setCurrentTransaction(transaction);
+            console.log('Transaction deployed: ',transaction);
+            console.log('Waiting for confirmation...');
+
+        } catch(err) {
+            console.log(err)
+            setStarted(false)
+            setErrors("Payment failed. Please try again.")
+        }
+    }
+
+    /**
+     * Watching for Contract event containing information about:
+     * - sender - the DEX contract address
+     * - ethAmount - amount of eth passed for exchange (in wei)
+     * - tokenAmount - token (USDC) got from the exchange (in wei)
+     * - exchangeRate - ETH/USDC price (multiplied by 10^8)
+     * - transactionDate - date of the transaction
+     */
+    useWatchContractEvent({
+        address: '0xFAda3be1C91290FFc687DA025b60BaeC8A0048Cf',// address of DEX contract for watching
+        abi,
+        eventName: 'Transaction',
+        onLogs(logs) {
+
+            setCompleted(true);
+            setStarted(false);
+
+            const log = logs[0];
+
+            // for some reason Log type is broken and don't see the .args object
+            // @ts-ignore
+            console.log('Log.data: ', handleJsonParsing(log.args));
+        },
+        onError(error) {
+            console.error('Error:', error);
+        },
+        syncConnectedChain: true
+    });
+
+    /**
+     * Parsing response data from SmartContract event to the JSON file suitable for sending through RESTful api to server
+     * @param rawdata
+     */
+    const handleJsonParsing = (rawdata: any) => {
+        const result: any = {};
+        for (const [key, value] of Object.entries(rawdata)) {
+            if (typeof value === 'bigint') {
+                result[key] = value.toString(); // change BigInt to String for JSON
+            } else if (typeof value === 'object' && value !== null) {
+                result[key] = handleJsonParsing(value);
+            } else {
+                result[key] = value;
+            }
+        }
+
+        return JSON.stringify(result);
+    }
+
+    /**
+     * Handles submit of form. Executes handleExchange() function for exchanging ETH/USDC then sends response this data to the server
+     * @param values - inputs of form after validation
+     */
     function onSubmit(values: z.infer<typeof formSchema>) {
-        // Do something with the form values.
-        // ✅ This will be type-safe and validated.
-        //TODO: handle the  submit
-        console.log(values)
+        handleExchange(values.ETH_amount);
+        // then(); sending data to the backend
     }
 
     return (

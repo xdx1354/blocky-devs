@@ -1,5 +1,5 @@
 import { Button } from '../components/ui/button';
-import React, { FC, useState } from 'react';
+import React, { FC } from 'react';
 import '../styles/App.css';
 import '../styles/tailwind.css';
 import { useNavigate } from "react-router";

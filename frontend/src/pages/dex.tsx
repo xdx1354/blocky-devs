@@ -2,7 +2,6 @@ import { Button } from '../components/ui/button';
 import React, {FC, useEffect, useState} from 'react';
 import '../styles/App.css';
 import '../styles/tailwind.css';
-import { useWallet } from "../legacy/WalletContext";
 import {useNavigate} from "react-router";
 import {ExchangeForm} from "../components/ExchangeForm";
 import {useAccount} from "wagmi";

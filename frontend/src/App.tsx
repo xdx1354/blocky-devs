@@ -13,14 +13,12 @@ function App() {
 
 
     return (
-        <WalletProvider>
             <Router>
                 <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/dex" element={<DEX />} />
                 </Routes>
             </Router>
-        </WalletProvider>
         // <Home/>
     );
 }

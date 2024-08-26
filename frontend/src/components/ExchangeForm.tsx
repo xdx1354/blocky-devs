@@ -16,18 +16,33 @@ import {
 } from "./ui/form"
 import { Input } from "./ui/input"
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "./ui/select"
-import {useAccount, useBalance} from "wagmi";
+import {
+    useAccount,
+    useBalance,
+    useWriteContract,
+    useConnect
+} from "wagmi";
+import { injected } from "wagmi/connectors"
+import { sepolia } from "viem/chains"
 import Web3 from 'web3';
+import {useState} from "react";
+import {ethers, parseEther} from "ethers";
 
 export function ExchangeForm() {
 
-    const { address, isConnected } = useAccount();
+    const { connectAsync } = useConnect()
+    const { address } = useAccount()
+    const { writeContractAsync } = useWriteContract()
+    const [started, setStarted] = useState(false)
+    const [errors, setErrors] = useState<string>()
+    const [completed, setCompleted] = useState(false)
     const { data, isError, isLoading } = useBalance({
         address: address,
     });
 
-    const balanceInETH = data ? parseFloat(Web3.utils.fromWei(data.value.toString(), 'ether')) : 0;
+    const [ethAmount, setEthAmount] = useState('0.01');
 
+    const balanceInETH = data ? parseFloat(Web3.utils.fromWei(data.value.toString(), 'ether')) : 0;
 
     const formSchema = z.object({
         ETH_amount: z.preprocess((val) => parseFloat(val as string), z
@@ -48,12 +63,50 @@ export function ExchangeForm() {
         },
     })
 
+
+    // EXCHANGE HANDLING
+
+    const handleExchange = async (amountInETH: number) => {
+        try {
+            setErrors('')
+            setStarted(true)
+            setCompleted(false);
+            if(!address) {
+                await connectAsync({ chainId: sepolia.id, connector: injected()})
+            }
+
+            const amountInWei = Web3.utils.toBigInt(Web3.utils.toWei(amountInETH, 'ether'));
+
+            const data = await writeContractAsync({
+                chainId: sepolia.id,
+                address: '0x50aCFF860916E74e15C749fC39A4bD84B550B5e7', // address of DEX contract
+                functionName: 'buy',
+                abi: [{
+                    "inputs": [],
+                    "name": "buy",
+                    "outputs": [],
+                    "stateMutability": "payable",
+                    "type": "function"
+                }],
+                value: amountInWei
+            })
+            setCompleted(true)
+            console.log(data)
+        } catch(err) {
+            console.log(err)
+            setStarted(false)
+            setErrors("Payment failed. Please try again.")
+        }
+    }
+
+
     // 2. Define a submit handler.
     function onSubmit(values: z.infer<typeof formSchema>) {
         // Do something with the form values.
         // ✅ This will be type-safe and validated.
         //TODO: handle the submit -> smartContract
-        console.log(data)
+        handleExchange(values.ETH_amount);
+        // console.log(data);
     }
 
     return (

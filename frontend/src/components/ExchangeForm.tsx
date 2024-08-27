@@ -26,8 +26,10 @@ import {
 import { injected } from "wagmi/connectors"
 import { sepolia } from "viem/chains"
 import Web3 from 'web3';
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import abi from "../contracts/DEX_abi.json"
+import {createTransaction} from "../api/transactionsApi";
+import {TransactionDTO} from "../types/types";
 
 export function ExchangeForm() {
 
@@ -40,9 +42,7 @@ export function ExchangeForm() {
     const { data, isError, isLoading } = useBalance({
         address: address,
     });
-
-
-    const [ethAmount, setEthAmount] = useState('0.01');
+    const [transaction, setTransaction] = useState<TransactionDTO>()
 
     const balanceInETH = data ? parseFloat(Web3.utils.fromWei(data.value.toString(), 'ether')) : 0;
 
@@ -128,7 +128,10 @@ export function ExchangeForm() {
 
             // for some reason Log type is broken and don't see the .args object
             // @ts-ignore
-            console.log('Log.data: ', handleJsonParsing(log.args));
+            console.log('Log.data: ', raw2string(log.args));
+            // @ts-ignore
+            setTransaction(raw2string(log.args));
+
         },
         onError(error) {
             console.error('Error:', error);
@@ -137,22 +140,41 @@ export function ExchangeForm() {
     });
 
     /**
-     * Parsing response data from SmartContract event to the JSON file suitable for sending through RESTful api to server
+     * UseEffect triggered by setting new transaction. Results in posting its data to the DB.
+     */
+    useEffect (() => {
+        if (transaction) {
+            try {
+                const result =  createTransaction(transaction);
+                console.log('Transaction posted successfully:', result);
+            } catch (error) {
+                console.error('Error posting transaction:', error);
+            }
+        } else {
+            console.log('No transaction created');
+        }
+    }, [transaction]);
+
+    /**
+     * Parsing response data from SmartContract event to the JSON with strings
      * @param rawdata
      */
-    const handleJsonParsing = (rawdata: any) => {
+    const raw2string = (rawdata: any) => {
         const result: any = {};
         for (const [key, value] of Object.entries(rawdata)) {
             if (typeof value === 'bigint') {
                 result[key] = value.toString(); // change BigInt to String for JSON
-            } else if (typeof value === 'object' && value !== null) {
-                result[key] = handleJsonParsing(value);
             } else {
                 result[key] = value;
             }
         }
 
-        return JSON.stringify(result);
+        // for (const [key, value] of Object.entries(result)) {
+        //     // @ts-ignore
+        //     console.log(value, typeof value); //testing datatypes
+        // }
+
+        return result;
     }
 
     /**
@@ -160,8 +182,8 @@ export function ExchangeForm() {
      * @param values - inputs of form after validation
      */
     function onSubmit(values: z.infer<typeof formSchema>) {
+        // Funkcja handleExchange powinna zwracać obiekt transakcji lub null/undefined
         handleExchange(values.ETH_amount);
-        // then(); sending data to the backend
     }
 
     return (

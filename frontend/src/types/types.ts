@@ -6,3 +6,11 @@ export interface Transaction {
     exchangeRate: number;
     transactionDate: Date;
 }
+
+export interface TransactionDTO {
+    sender: string;
+    ethAmount: string;
+    tokenAmount: string;
+    exchangeRate:  string;
+    transactionDate: string;
+}

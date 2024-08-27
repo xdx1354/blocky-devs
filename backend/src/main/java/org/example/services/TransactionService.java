@@ -6,6 +6,7 @@ import org.example.repositories.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -25,8 +26,8 @@ public class TransactionService {
 
         // Parsing data
         String sender = dto.getSender();
-        Long ethAmount = Long.parseLong(dto.getEthAmount());
-        Long tokenAmount = Long.parseLong(dto.getTokenAmount());
+        BigInteger ethAmount = new BigInteger(dto.getEthAmount());
+        BigInteger tokenAmount = new BigInteger(dto.getTokenAmount());
         Long exchangeRate = Long.parseLong(dto.getExchangeRate());
         Instant instant = Instant.ofEpochSecond(Long.parseLong(dto.getTransactionDate()));
         LocalDate transactionDate = instant.atZone(ZoneId.systemDefault()).toLocalDate();

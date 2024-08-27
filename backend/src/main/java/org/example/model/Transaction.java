@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
+import java.math.BigInteger;
 import java.time.LocalDate;
 
 @Data
@@ -33,8 +34,8 @@ public class Transaction {
     private String transactionSender;
 
     @Column(name = "erc20_amount", nullable = false)
-    private Long erc20Amount;
+    private BigInteger erc20Amount;
 
     @Column(name = "eth_amount", nullable = false)
-    private Long ethAmount;
+    private BigInteger ethAmount;
 }

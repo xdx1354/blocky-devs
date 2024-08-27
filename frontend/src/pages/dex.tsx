@@ -5,6 +5,8 @@ import '../styles/tailwind.css';
 import {useNavigate} from "react-router";
 import {ExchangeForm} from "../components/ExchangeForm";
 import {useAccount} from "wagmi";
+import { fetchTransactions } from '../api/transactionsApi';
+import { Transaction } from '../types/types';
 
 
 
@@ -14,7 +16,7 @@ const DEX: FC = () => {
 
     const navigate = useNavigate();
     const { address, isConnected } = useAccount();
-
+    const [transactions, setTransactions] = useState<Transaction[]>([]);
 
     const handleBack = () => {
         console.log('isConnected', isConnected);
@@ -53,10 +55,20 @@ const DEX: FC = () => {
         }
     };
 
+    const loadTransactions = async () => {
+        try {
+            const data = await fetchTransactions();
+            setTransactions(data);
+            console.log("Loaded transactions:", data); // Debugging line
+        } catch (error) {
+            console.error("Error loading transactions:", error);
+        }
+    };
+
     useEffect(() => {
         // Fetch the price immediately when the component mounts
         fetchPrice();
-
+        loadTransactions();
         //TODO:
         // const intervalId = setInterval(fetchPrice, 10000); // 10000ms = 10s
 
@@ -87,34 +99,41 @@ const DEX: FC = () => {
                 </div>
 
 
-                <div className="flex flex-row justify-evenly items-center min-h-80 p-6 w-screen space-y-6">
-                    <div className="border border-gray-200 rounded-md p-6 min-h-80 min-w-fit">
-                        ETH/USDC
-                    </div>
-                    <div className="border border-gray-200 rounded-md p-6 min-h-80 min-w-fit">
-                        NFT
-                    </div>
+
+                <div className="border border-gray-200 rounded-md p-6 min-h-80 min-w-fit">
+                        <ul>
+                            {transactions.map((transaction) => (
+                                <li key={transaction.id} className="p-2 border-b border-gray-200">
+                                    ID: {transaction.id}, Sender: {transaction.transactionSender},
+                                    Amount: {transaction.ethAmount} ETH
+                                </li>
+                            ))}
+                        </ul>
+
                 </div>
 
-                <Button
-                    variant="destructive"
-                    onClick={handleBack}
-                    className="text-lg py-3 px-6"
-                >
-                    Back
-                </Button>
-
-                <Button
-                    variant="destructive"
-                    onClick={fetchPrice}
-                    className="text-lg py-3 px-6"
-                >
-                    Fetch
-                </Button>
-
-
-
+                <div className="border border-gray-200 rounded-md p-6 min-h-80 min-w-fit">
+                    NFT
+                </div>
             </div>
+
+            <Button
+                variant="destructive"
+                onClick={handleBack}
+                className="text-lg py-3 px-6"
+            >
+            Back
+                </Button>
+
+                <Button
+                    variant="destructive"
+                    onClick={loadTransactions}
+                    className="text-lg py-3 px-6"
+                >
+                    Fetch transactions
+                </Button>
+
+
         </div>
     );
 };

@@ -2,6 +2,9 @@ package org.example.controllers;
 
 import org.example.DTO.TransactionDTO;
 import org.example.model.Transaction;
+import org.example.model.TransactionPage;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,8 +34,9 @@ public class TransactionsController {
         }
     }
 
-    @GetMapping("/transactions")
-    public ResponseEntity<List<Transaction>> getAllTransactions() {
+//    // OLD FETCHING ALL TRANSACTIONS
+    @GetMapping("/all")
+    public ResponseEntity<List<Transaction>> getAllTransactions( ) {
         try {
             List<Transaction> transactions = transactionService.getAllTransactions();
             return new ResponseEntity<>(transactions, HttpStatus.OK);
@@ -40,4 +44,19 @@ public class TransactionsController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Couldn't retrieve transactions", e);
         }
     }
+
+
+    @GetMapping("/transactions")
+    public ResponseEntity<Page<Transaction>> getTransactions(
+            @RequestParam(defaultValue = "0") int pageNumber,
+            @RequestParam(defaultValue = "10") int pageSize,
+            @RequestParam(defaultValue = "ASC") Sort.Direction sortDirection,
+            @RequestParam(defaultValue = "transactionDate") String sortBy,
+            @RequestParam(defaultValue = "") String filterBy) {
+
+        TransactionPage transactionPage = new TransactionPage(pageNumber, pageSize, sortDirection, sortBy, filterBy);
+        return new ResponseEntity<>(transactionService.getTransactions(transactionPage), HttpStatus.OK);
+    }
+
+
 }

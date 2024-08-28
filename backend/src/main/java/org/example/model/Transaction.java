@@ -37,5 +37,5 @@ public class Transaction {
     private BigInteger erc20Amount;
 
     @Column(name = "eth_amount", nullable = false)
-    private BigInteger ethAmount;
+        private BigInteger ethAmount;
 }

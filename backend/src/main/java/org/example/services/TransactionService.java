@@ -2,8 +2,15 @@ package org.example.services;
 
 import org.example.DTO.TransactionDTO;
 import org.example.model.Transaction;
+import org.example.model.TransactionPage;
 import org.example.repositories.TransactionRepository;
+import org.example.repositories.specification.TransactionSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
@@ -46,7 +53,25 @@ public class TransactionService {
 
     }
 
-    public List<Transaction> getAllTransactions() {
+    public Page<Transaction> getTransactions(TransactionPage transactionPage) {
+
+        System.out.println("Sort Direction: " + transactionPage.getSortDirection());
+        System.out.println("Sort By: " + transactionPage.getSortBy());
+        System.out.println("Page: " + transactionPage.getPageNumber());
+        System.out.println("Page size: " + transactionPage.getPageSize());
+
+        Sort sort = Sort.by(transactionPage.getSortDirection(), transactionPage.getSortBy());
+        Pageable pageable = PageRequest.of(transactionPage.getPageNumber(), transactionPage.getPageSize(), sort);
+
+
+        Specification<Transaction> spec = TransactionSpecification.filterBySender(transactionPage.getFilterBy());
+
+
+        return transactionRepository.findAll(spec, pageable);
+//        return transactionRepository.findAll(pageable);
+    }
+
+    public List<Transaction> getAllTransactions( ) {
         return transactionRepository.findAll();
     }
 }

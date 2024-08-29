@@ -9,6 +9,7 @@ import { fetchTransactions } from '../api/transactionsApi';
 import { Transaction } from '../types/types';
 import LoadingWidget from "../components/LoadingWidget";
 import ExchangeProvider from "../utils/ExchangeContext";
+import TransactionTable from "../components/TransactionTable";
 
 
 const DEX: FC = () => {
@@ -105,14 +106,15 @@ const DEX: FC = () => {
 
 
                         <div className="border border-gray-200 rounded-md p-6 min-h-80 min-w-fit">
-                                <ul>
-                                    {transactions.map((transaction) => (
-                                        <li key={transaction.id} className="p-2 border-b border-gray-200">
-                                            ID: {transaction.id}, Sender: {transaction.transactionSender},
-                                            Amount: {transaction.ethAmount} ETH
-                                        </li>
-                                    ))}
-                                </ul>
+                                {/*<ul>*/}
+                                {/*    {transactions.map((transaction) => (*/}
+                                {/*        <li key={transaction.id} className="p-2 border-b border-gray-200">*/}
+                                {/*            ID: {transaction.id}, Sender: {transaction.transactionSender},*/}
+                                {/*            Amount: {transaction.ethAmount} ETH*/}
+                                {/*        </li>*/}
+                                {/*    ))}*/}
+                                {/*</ul>*/}
+                            <TransactionTable/>
 
                         </div>
                     </div>

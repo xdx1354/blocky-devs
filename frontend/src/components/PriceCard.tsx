@@ -39,6 +39,7 @@ const PriceCard: React.FC = () => {
 
 
     useEffect(() => {
+        fetchPrice();
         const intervalId = setInterval(fetchPrice, 10000); // 10000ms = 10s
         return () => clearInterval(intervalId);
     }, []);

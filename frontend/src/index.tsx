@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './styles/index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import {Web3ModalProvider} from "./WagmiProvider";
+import {Web3ModalProvider} from "./utils/WagmiProvider";
 
 
 const root = ReactDOM.createRoot(

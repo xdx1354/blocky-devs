@@ -20,6 +20,7 @@ import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { ArrowUpDown } from "lucide-react";
 import {TransactionTableData, PaginatedResponse} from "../types/types";
+import {useExchangeContext} from "../utils/ExchangeContext";
 
 export const columns: ColumnDef<TransactionTableData>[] = [
     {
@@ -97,6 +98,8 @@ export function TransactionsTable() {
         pageSize: 10,
     });
     const [pageCount, setPageCount] = useState<number>(1);
+    const {completed} = useExchangeContext()
+
 
     const fetchData = async () => {
         const sortBy = sorting.map(sort => sort.id).join(',');
@@ -112,7 +115,7 @@ export function TransactionsTable() {
 
     useEffect(() => {
         fetchData();
-    }, [sorting, columnFilters, pagination.pageIndex, pagination.pageSize]);
+    }, [sorting, columnFilters, pagination.pageIndex, pagination.pageSize, completed]);
 
 
     const table = useReactTable({

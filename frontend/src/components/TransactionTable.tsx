@@ -164,11 +164,11 @@ export function TransactionsTable() {
                     onChange={(event) => {
                         setColumnFilters(event.target.value.trim());
                     }}
-                    className="max-w-sm"
+                    className="max-w-sm bg-black text-white border-gray-400"
                 />
             </div>
-            <div className="rounded-md border">
-                <Table>
+            <div className="rounded-md border border-gray-400 font-medium">
+                <Table >
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
@@ -215,26 +215,33 @@ export function TransactionsTable() {
                     </TableBody>
                 </Table>
             </div>
-            <div className="flex items-center justify-between py-4">
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => table.previousPage()}
-                    disabled={!table.getCanPreviousPage()}
-                >
-                    Previous
-                </Button>
-                <span>
-                    Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
-                </span>
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => table.nextPage()}
-                    disabled={!table.getCanNextPage()}
-                >
-                    Next
-                </Button>
+            <div className="flex items-center justify-center py-4 w-full">
+                <div className="w-1/3 flex justify-center font-black">
+                    <Button
+                        variant="default"
+                        size="sm"
+                        onClick={() => table.previousPage()}
+                        disabled={!table.getCanPreviousPage()}
+                    >
+                        Back
+                    </Button>
+                </div>
+                <div className="w-1/3 flex justify-center">
+                    <span>
+                        Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+                    </span>
+                </div>
+                <div className="w-1/3 flex justify-center font-black">
+                    <Button
+                        variant="default"
+                        size="sm"
+                        onClick={() => table.nextPage()}
+                        disabled={!table.getCanNextPage()}
+                    >
+                        Next
+                    </Button>
+                </div>
+
             </div>
         </div>
     );

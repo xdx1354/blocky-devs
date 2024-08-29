@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "./ui/card";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "./ui/card";
 
 
 const PriceCard: React.FC = () => {
@@ -30,7 +30,7 @@ const PriceCard: React.FC = () => {
 
             const data = await response.json();
             setEthPrice(data.ethereum.usd);
-            console.log(data.ethereum.usd); // You can now use the fetched data
+            console.log(data.ethereum.usd);
 
         } catch (err) {
             console.error('Error fetching price:', err);
@@ -39,23 +39,20 @@ const PriceCard: React.FC = () => {
 
 
     useEffect(() => {
-        const intervalId = setInterval(fetchPrice, 5000); // 10000ms = 10s
+        const intervalId = setInterval(fetchPrice, 10000); // 10000ms = 10s
         return () => clearInterval(intervalId);
     }, []);
 
     return (
 
-        <Card>
+        <Card className="w-100 h-60 ml-5 bg-black text-white">
             <CardHeader>
                 <CardTitle >ETH/USD</CardTitle>
                 <CardDescription>ETH/USD price is provided by Coingeco API</CardDescription>
             </CardHeader>
-            <CardContent>
-                <p>ETH/USD: {ethPrice}</p>
+            <CardContent className="font-bold text-7xl flex flex-col mt-10">
+                ${ethPrice}
             </CardContent>
-            <CardFooter>
-                Price is refreshed each 5s.
-            </CardFooter>
         </Card>
 
     );

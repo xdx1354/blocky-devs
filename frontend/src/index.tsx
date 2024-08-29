@@ -7,8 +7,9 @@ import {Web3ModalProvider} from "./WagmiProvider";
 
 
 const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
+    document.getElementById('root') as HTMLElement
 );
+
 root.render(
   <React.StrictMode>
       <Web3ModalProvider>

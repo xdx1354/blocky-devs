@@ -50,7 +50,6 @@ const ExchangeProvider: FC<{ children: ReactNode }> = ({ children }) => {
         }
     }, [data, refetch]);
 
-
     const handleExchange = async (amountInETH: number) => {
         try {
             setErrors('');
@@ -70,12 +69,6 @@ const ExchangeProvider: FC<{ children: ReactNode }> = ({ children }) => {
                 abi,
                 value: amountInWei,
             });
-
-            try {
-                await refetch({ throwOnError: true, cancelRefetch: false }); // TODO: This does not work and I dont know why
-            } catch (err) {
-                console.error("Error occurred while refreshing the account balance: ", err);
-            }
 
             console.log('Transaction deployed:', transaction);
             console.log('Waiting for confirmation...');
@@ -98,6 +91,12 @@ const ExchangeProvider: FC<{ children: ReactNode }> = ({ children }) => {
             // @ts-ignore
             setTransaction(raw2string(log.args));
 
+            try {
+                refetch({ throwOnError: true, cancelRefetch: false }); // TODO: This does not work and I dont know why
+            } catch (err) {
+                console.error("Error occurred while refreshing the account balance: ", err);
+            }
+
             setCompleted(true);
             setStarted(false);
         },
@@ -113,7 +112,6 @@ const ExchangeProvider: FC<{ children: ReactNode }> = ({ children }) => {
             createTransaction(transaction);
         }
     }, [transaction]);
-
 
     const raw2string = (rawData: any) => {
         const result: any = {};

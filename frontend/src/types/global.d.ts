@@ -1,7 +1,6 @@
 import { MetaMaskProvider } from "web3";
 import React from "react";
 
-/// <reference types="react-scripts" />
 
 declare global {
     interface Window {

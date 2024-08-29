@@ -52,6 +52,9 @@ services:
       <<: *common-variables
       REACT_APP_PUBLIC_API_HOST: host.docker.internal
       POSTGRES_HOST: host.docker.internal
+      REACT_APP_COINGECO_API_KEY: $REACT_APP_COINGECO_API_KEY
+      REACT_APP_WALLET_PROJECT_ID: $REACT_APP_WALLET_PROJECT_ID
+      REACT_APP_RPC_KEY: $REACT_APP_RPC_KEY
     command: npm start
 
 volumes:

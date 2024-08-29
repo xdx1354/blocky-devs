@@ -6,7 +6,6 @@ import Web3 from 'web3';
 import abi from "../contracts/DEX_abi.json"
 import {createTransaction} from "../api/transactionsApi";
 import {TransactionDTO} from "../types/types";
-import {Balance} from "@web3modal/common";
 
 
 export interface ExchangeContextType {
@@ -94,13 +93,14 @@ const ExchangeProvider: FC<{ children: ReactNode }> = ({ children }) => {
         abi,
         eventName: 'Transaction',
         onLogs(logs) {
-            setCompleted(true);
-            setStarted(false);
             const log = logs[0];
             // @ts-ignore
             console.log('Log.data: ', raw2string(log.args));
             // @ts-ignore
             setTransaction(raw2string(log.args));
+
+            setCompleted(true);
+            setStarted(false);
         },
         onError(error) {
             setErrors('Error: no confirmation of transaction received.');
@@ -108,6 +108,13 @@ const ExchangeProvider: FC<{ children: ReactNode }> = ({ children }) => {
         },
         syncConnectedChain: true,
     });
+
+    useEffect(() => {
+        if(transaction) {
+            createTransaction(transaction);
+        }
+    }, [transaction]);
+
 
     const raw2string = (rawData: any) => {
         const result: any = {};

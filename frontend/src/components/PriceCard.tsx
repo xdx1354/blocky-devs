@@ -39,23 +39,20 @@ const PriceCard: React.FC = () => {
 
 
     useEffect(() => {
-        const intervalId = setInterval(fetchPrice, 5000); // 10000ms = 10s
+        const intervalId = setInterval(fetchPrice, 10000); // 10000ms = 10s
         return () => clearInterval(intervalId);
     }, []);
 
     return (
 
-        <Card>
+        <Card className="w-100 h-60 ml-5">
             <CardHeader>
                 <CardTitle >ETH/USD</CardTitle>
                 <CardDescription>ETH/USD price is provided by Coingeco API</CardDescription>
             </CardHeader>
-            <CardContent>
-                <p>ETH/USD: {ethPrice}</p>
+            <CardContent className="font-bold text-7xl flex flex-col mt-10">
+                {ethPrice}$
             </CardContent>
-            <CardFooter>
-                Price is refreshed each 5s.
-            </CardFooter>
         </Card>
 
     );

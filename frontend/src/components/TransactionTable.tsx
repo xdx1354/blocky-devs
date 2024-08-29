@@ -21,6 +21,7 @@ import { Button } from "./ui/button";
 import { ArrowUpDown } from "lucide-react";
 import {TransactionTableData, PaginatedResponse} from "../types/types";
 import {useExchangeContext} from "../utils/ExchangeContext";
+import Web3 from "web3";
 
 export const columns: ColumnDef<TransactionTableData>[] = [
     {
@@ -98,7 +99,18 @@ export function TransactionsTable() {
         pageSize: 10,
     });
     const [pageCount, setPageCount] = useState<number>(1);
-    const {completed} = useExchangeContext()
+    const {completed} = useExchangeContext();
+
+    const formatWeiValue = (weiValue: string, decimals: number, fractionDigits: number): string => {
+        const ethValue: string = Web3.utils.fromWei(weiValue, decimals);
+        const roundedValue: string = parseFloat(ethValue).toFixed(fractionDigits);
+
+        if ( parseFloat(weiValue) > 0 && roundedValue == "0.00000000") {
+            return "<0.00000001";
+        } else {
+            return roundedValue;
+        }
+    };
 
 
     const fetchData = async () => {
@@ -109,7 +121,15 @@ export function TransactionsTable() {
             `http://localhost:8080/v1/transactions?pageNumber=${pagination.pageIndex}&pageSize=${pagination.pageSize}&sortDirection=${sortDirection}&sortBy=${sortBy}&filterBy=${columnFilters}`
         );
         const result: PaginatedResponse = await response.json();
-        setData(result.content);
+
+        const convertedData = result.content.map(tx => ({
+            ...tx,
+            ethAmount: formatWeiValue(tx.ethAmount, 18, 8),
+            erc20Amount: formatWeiValue(tx.erc20Amount, 18, 8),
+            exchangeRate: formatWeiValue(tx.exchangeRate, 8, 4),
+        }));
+
+        setData(convertedData);
         setPageCount(result.totalPages);
     };
 

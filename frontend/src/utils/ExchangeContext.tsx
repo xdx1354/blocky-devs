@@ -46,10 +46,9 @@ const ExchangeProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
     useEffect(() => {
         if (data) {
-            const balanceInETH = parseFloat(Web3.utils.fromWei(data.value.toString(), 'ether'));
-            setETHBalance(balanceInETH);
+            setETHBalance(parseFloat(Web3.utils.fromWei(data.value.toString(), 'ether')));
         }
-    }, [data]);
+    }, [data, refetch]);
 
 
     const handleExchange = async (amountInETH: number) => {
@@ -73,7 +72,7 @@ const ExchangeProvider: FC<{ children: ReactNode }> = ({ children }) => {
             });
 
             try {
-                refetch(); // refreshing account balance
+                await refetch({ throwOnError: true, cancelRefetch: false }); // TODO: This does not work and I dont know why
             } catch (err) {
                 console.error("Error occurred while refreshing the account balance: ", err);
             }

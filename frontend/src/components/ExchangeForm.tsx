@@ -6,9 +6,7 @@ import { Button } from "./ui/button";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage, FormDescription } from "./ui/form";
 import { Input } from "./ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
-import Web3 from "web3";
-// import {useExchange} from "../hooks/useExchange";
-import ExchangeContext, {ExchangeContextType, useExchangeContext} from "../utils/ExchangeContext";
+import {useExchangeContext} from "../utils/ExchangeContext";
 
 export const ExchangeForm: React.FC = () => {
 

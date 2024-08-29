@@ -1,4 +1,4 @@
-import React, {useContext} from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -10,7 +10,7 @@ import {useExchangeContext} from "../utils/ExchangeContext";
 
 export const ExchangeForm: React.FC = () => {
 
-    const { started, completed, errors, transaction, handleExchange, data, ETHBalance } = useExchangeContext();
+    const { started, handleExchange, ETHBalance } = useExchangeContext();
 
     const formSchema = z.object({
         ETH_amount: z.preprocess((val) => parseFloat(val as string), z
@@ -32,8 +32,8 @@ export const ExchangeForm: React.FC = () => {
     }
 
     return (
-        <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <Form {...form} >
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 text-white">
                 <FormField
                     control={form.control}
                     name="ETH_amount"
@@ -41,7 +41,7 @@ export const ExchangeForm: React.FC = () => {
                         <FormItem>
                             <FormLabel>Amount of ETH</FormLabel>
                             <FormControl>
-                                <Input placeholder="0" {...field} type="number" />
+                                <Input placeholder="0" {...field} type="number" className="bg-black"/>
                             </FormControl>
                             <FormDescription>An amount of ETH you want to exchange</FormDescription>
                             <FormMessage />
@@ -55,13 +55,13 @@ export const ExchangeForm: React.FC = () => {
                         <FormItem>
                             <FormLabel>Currency</FormLabel>
                             <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                <FormControl>
+                                <FormControl className="bg-black">
                                     <SelectTrigger>
                                         <SelectValue placeholder="Select desired currency" />
                                     </SelectTrigger>
                                 </FormControl>
-                                <SelectContent>
-                                    <SelectItem value="USDC">USDC</SelectItem>
+                                <SelectContent >
+                                    <SelectItem value="USDC" >USDC</SelectItem>
                                 </SelectContent>
                             </Select>
                             <FormDescription>Select desired cryptocurrency to buy with ETH</FormDescription>
@@ -69,7 +69,7 @@ export const ExchangeForm: React.FC = () => {
                         </FormItem>
                     )}
                 />
-                <Button type="submit" disabled={started}>Submit</Button>
+                <Button type="submit" variant="secondary" disabled={started}>Submit</Button>
             </form>
         </Form>
     );

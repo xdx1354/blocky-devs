@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "./ui/card";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "./ui/card";
 
 
 const PriceCard: React.FC = () => {
@@ -30,7 +30,7 @@ const PriceCard: React.FC = () => {
 
             const data = await response.json();
             setEthPrice(data.ethereum.usd);
-            console.log(data.ethereum.usd); // You can now use the fetched data
+            console.log(data.ethereum.usd);
 
         } catch (err) {
             console.error('Error fetching price:', err);
@@ -45,13 +45,13 @@ const PriceCard: React.FC = () => {
 
     return (
 
-        <Card className="w-100 h-60 ml-5">
+        <Card className="w-100 h-60 ml-5 bg-black text-white">
             <CardHeader>
                 <CardTitle >ETH/USD</CardTitle>
                 <CardDescription>ETH/USD price is provided by Coingeco API</CardDescription>
             </CardHeader>
             <CardContent className="font-bold text-7xl flex flex-col mt-10">
-                {ethPrice}$
+                ${ethPrice}
             </CardContent>
         </Card>
 

@@ -7,10 +7,10 @@ const ExchangeCard: React.FC = () => {
 
     return (
 
-        <Card className="w-1/3 mr-5 bg-card">
+        <Card className="w-1/3 mr-5 bg-black text-white">
             <CardHeader>
                 <CardTitle >Exchange</CardTitle>
-                <CardDescription>ETH for USDC on Sepolia Chainlink</CardDescription>
+                <CardDescription>Exchange ETH for USDC on Sepolia Chainlink</CardDescription>
             </CardHeader>
             <CardContent>
                 <ExchangeForm/>

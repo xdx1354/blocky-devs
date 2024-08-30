@@ -6,7 +6,6 @@ import {ExchangeForm} from "./ExchangeForm";
 const ExchangeCard: React.FC = () => {
 
     return (
-
         <Card className="w-1/3 mr-5 bg-black text-white">
             <CardHeader>
                 <CardTitle >Exchange</CardTitle>
@@ -16,12 +15,10 @@ const ExchangeCard: React.FC = () => {
                 <ExchangeForm/>
             </CardContent>
             <CardFooter>
-                Exchange rate is provided by Chainlink.
+                Exchange rate of is provided by Chainlink.
             </CardFooter>
         </Card>
-
     );
 }
-
 
 export default ExchangeCard;

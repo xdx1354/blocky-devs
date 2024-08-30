@@ -17,16 +17,19 @@
 
 ## Setup
 
-### 1. Create .env File
+### 1. Colone the repository
+`git clone https://github.com/xdx1354/blocky-devs.git`
+
+### 2. Create .env File
 Rename `.env.example` to `.env` and update the following variables:
 - `REACT_APP_COINGECKO_API_KEY`: Obtain from [CoinGecko API](https://www.coingecko.com/en/api).
 - `REACT_APP_WALLET_PROJECT_ID`: Get your project ID from [WalletConnect](https://walletconnect.com/).
 - `REACT_APP_RPC_KEY`: Acquire an RPC key from [QuickNode](https://www.quicknode.com/).
 
-### 2. Run Docker
+### 3. Run Docker
 Execute `docker-compose up --build` in the root project directory.
 
-### 3. Open Web App
+### 4. Open Web App
 If `FRONTEND_PORT=3000` is set in `.env`, access the app at [http://localhost:3000/](http://localhost:3000/).
 
 ## Using the App

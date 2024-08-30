@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import {
     Table,
     TableBody,
@@ -101,19 +101,22 @@ export function TransactionsTable() {
     const [pageCount, setPageCount] = useState<number>(1);
     const {completed} = useExchangeContext();
 
-    const formatWeiValue = (weiValue: string, decimals: number, fractionDigits: number): string => {
-        const ethValue: string = Web3.utils.fromWei(weiValue, decimals);
-        const roundedValue: string = parseFloat(ethValue).toFixed(fractionDigits);
+    const formatWeiValue = useCallback(
+        (weiValue: string, decimals: number, fractionDigits: number): string => {
+            const ethValue: string = Web3.utils.fromWei(weiValue, decimals);
+            const roundedValue: string = parseFloat(ethValue).toFixed(fractionDigits);
 
-        if ( parseFloat(weiValue) > 0 && roundedValue == "0.00000000") {
-            return "<0.00000001";
-        } else {
-            return roundedValue;
-        }
-    };
+            if (parseFloat(weiValue) > 0 && roundedValue === "0.00000000") {
+                return "<0.00000001";
+            } else {
+                return roundedValue;
+            }
+        },
+        []
+    );
 
 
-    const fetchData = async () => {
+    const fetchData = useCallback(async () => {
         const sortBy = sorting.map(sort => sort.id).join(',');
         const sortDirection = sorting.map(sort => sort.desc ? 'DESC' : 'ASC').join(',');
 
@@ -131,11 +134,12 @@ export function TransactionsTable() {
 
         setData(convertedData);
         setPageCount(result.totalPages);
-    };
+    }, [sorting, columnFilters, pagination.pageIndex, pagination.pageSize, formatWeiValue, completed]);
 
     useEffect(() => {
+        console.log("Refetching table data!");
         fetchData();
-    }, [sorting, columnFilters, pagination.pageIndex, pagination.pageSize, completed]);
+    }, [sorting, columnFilters, pagination.pageIndex, pagination.pageSize, completed, fetchData]);
 
 
     const table = useReactTable({

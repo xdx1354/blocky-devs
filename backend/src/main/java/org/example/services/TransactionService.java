@@ -68,7 +68,6 @@ public class TransactionService {
 
 
         return transactionRepository.findAll(spec, pageable);
-//        return transactionRepository.findAll(pageable);
     }
 
     public List<Transaction> getAllTransactions( ) {

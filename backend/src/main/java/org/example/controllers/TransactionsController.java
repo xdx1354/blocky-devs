@@ -34,7 +34,6 @@ public class TransactionsController {
         }
     }
 
-//    // OLD FETCHING ALL TRANSACTIONS
     @GetMapping("/all")
     public ResponseEntity<List<Transaction>> getAllTransactions( ) {
         try {

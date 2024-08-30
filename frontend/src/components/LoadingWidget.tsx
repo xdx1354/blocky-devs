@@ -25,7 +25,7 @@ const LoadingWidget: React.FC<LoadingWidgetProps> = () => {
     }
 
     return (
-        <div className="absolute inset-x-0 top-4 mx-auto z-10 w-full max-w-xs flex flex-row items-center justify-between p-4 bg-gray-800 rounded-xl shadow-md">
+        <div className="fixed inset-x-0 top-4 mx-auto z-10 w-full max-w-xs flex flex-row items-center justify-between p-4 bg-gray-800 rounded-xl shadow-md">
             <div className="flex flex-row items-center">
                 {started && (
                     <div className="flex flex-row items-center">
